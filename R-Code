@@ -1,0 +1,135 @@
+pages <- data.frame(c("svedkavodka", "ThreeOlives", "smirnoffus", "pinnaclevodkas"))
+
+##Three functions to use in coordination with the Rfacebook package
+
+
+##This function will create the API handshake
+#######Authorize Yourself#########
+
+authorizefb <- function(){
+  library(Rfacebook)
+  library(httr)
+  library(rjson)
+  library(dplyr)
+  library(magrittr)
+  
+  fb_oauth <- fbOAuth('130636077077630', '74ee0407448f6f79164510fcba6a212d', extended_permissions = TRUE)
+  save(fb_oauth, file="fb_oauth")
+}
+
+
+
+
+#######Pull from a Page#########
+## This function pulls form a specific date range, last 100 posts from a particular page
+## Then cleans out the  posts and writes a csv to your desketop
+
+
+pullPage <- function(x){
+  load("fb_oauth")
+  user <- Sys.info()["user"]
+  pageName = x
+  pageDirty <- getPage(page=pageName, token=fb_oauth, since="2014/12/01", until="2015/02/15", feed=FALSE)
+  pageClean = subset(pageDirty, pageDirty$link!="NA")
+  write.csv(pageClean, file=paste('/Users/',user,'/Desktop/',pageName, '.csv', sep=""), row.names=F)
+}
+
+
+
+#######Pull from a list#########
+## Pulls from a list of Facebook page names you provide
+## 'x' is the name of the dataframe that has the FB page names
+## 'month' is the month - number 1-12
+## Loops thru the list and pulls last 100 post data for each page
+## Writes each page to its own csv to your desktop
+## returns the list to the console for verification
+
+## Remember to import a dataframe with a list of page names
+
+pullList <- function(x,month){
+  load("fb_oauth")
+  colnames(x)[1] <- 'page'
+  user <- Sys.info()["user"]
+  month <- as.numeric(month)
+  
+  ###create empty data frame
+  col.type = c("character","character","character","character","character","character","character","character","character","character")
+  col.names = c('from_id','from_name','message','created_time','type','link','id','likes_count','comments_count','shares_count')
+  allPages <- read.csv(text="", colClasses=col.type, col.names=col.names)
+  #print(x)
+  
+  i = unique(x)
+  
+  
+  if (month<=12&&month>=10){
+    month <- as.character(month)
+    ###loop thru list and make csv for each along with aggregate list csv
+    for (i in x$page){
+      pageName <- as.character(i)
+      pageDirty <- getPage(URLencode(pageName), token=fb_oauth, feed=FALSE)
+      pageClean = subset(pageDirty, pageDirty$link!="NA")
+      pageClean <- pageClean[grep(paste("2015-0",month,sep=""), pageClean$created_time),]
+      datafile1 <- pageClean
+      datafile2 <- allPages
+      allPages <- rbind(datafile1, datafile2)
+      write.csv(pageClean, file=paste('/Users/',user,'/Desktop/',pageName, '.csv', sep=""), row.names=F)
+      print(i)
+    }
+    
+    
+    write.csv(allPages, file=paste('/Users/',user,'/Desktop/allPages.csv', sep=""), row.names=F)
+    
+    ###competitors csv
+    pages <- allPages
+    
+    posts <- pages %>%
+      group_by(from_name) %>%
+      summarise(posts = n())
+    
+    engStats <- pages %>% group_by(from_name) %>% summarise_each(funs(sum), likes_count, comments_count, shares_count)
+    
+    engStats$posts <- paste(posts$posts)
+    write.csv(engStats, file=paste('/Users/',user,'/Desktop/competitors.csv', sep=""), row.names=F)
+    
+  } else if
+  (month<=9&&month>=1){
+    month <- as.character(month)
+    ###loop thru list and make csv for each along with aggregate list csv
+    for (i in x$page){
+      pageName <- as.character(i)
+      pageDirty <- getPage(URLencode(pageName), token=fb_oauth, feed=FALSE)
+      pageClean = subset(pageDirty, pageDirty$link!="NA")
+      pageClean <- pageClean[grep(paste("2015-0",month,sep=""), pageClean$created_time),]
+      datafile1 <- pageClean
+      datafile2 <- allPages
+      allPages <- rbind(datafile1, datafile2)
+      write.csv(pageClean, file=paste('/Users/',user,'/Desktop/',pageName, '.csv', sep=""), row.names=F)
+      print(i)
+    }
+    
+    
+    write.csv(allPages, file=paste('/Users/',user,'/Desktop/allPages.csv', sep=""), row.names=F)
+    
+    ###competitors csv
+    pages <- allPages
+    
+    posts <- pages %>%
+      group_by(from_name) %>%
+      summarise(posts = n())
+    
+    engStats <- pages %>% group_by(from_name) %>% summarise_each(funs(sum), likes_count, comments_count, shares_count)
+    
+    engStats$posts <- paste(posts$posts)
+    write.csv(engStats, file=paste('/Users/',user,'/Desktop/competitors.csv', sep=""), row.names=F)
+    
+  }
+  
+  
+  else{
+    return("Error: Number for month must be between 1-12")
+  }
+  
+  
+}
+
+
