@@ -1,4 +1,4 @@
-pages <- data.frame(c("svedkavodka", "ThreeOlives", "smirnoffus", "pinnaclevodkas"))
+pages <- data.frame(c("FB_page", "FB_page", "FB_page", "FB_page"))
 
 ##Three functions to use in coordination with the Rfacebook package
 
@@ -13,7 +13,7 @@ authorizefb <- function(){
   library(dplyr)
   library(magrittr)
   
-  fb_oauth <- fbOAuth('130636077077630', '74ee0407448f6f79164510fcba6a212d', extended_permissions = TRUE)
+  fb_oauth <- fbOAuth('key', 'secret', extended_permissions = TRUE)
   save(fb_oauth, file="fb_oauth")
 }
 
