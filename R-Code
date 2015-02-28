@@ -1,9 +1,7 @@
-pages <- data.frame(c("FB_page", "FB_page", "FB_page", "FB_page"))
-
 ##Three functions to use in coordination with the Rfacebook package
 
+##This function will create the API handshake and load all necessary packages
 
-##This function will create the API handshake
 #######Authorize Yourself#########
 
 authorizefb <- function(){
@@ -13,23 +11,22 @@ authorizefb <- function(){
   library(dplyr)
   library(magrittr)
   
-  fb_oauth <- fbOAuth('key', 'secret', extended_permissions = TRUE)
+  fb_oauth <- fbOAuth('130636077077630', '74ee0407448f6f79164510fcba6a212d', extended_permissions = TRUE)
   save(fb_oauth, file="fb_oauth")
 }
 
 
 
-
 #######Pull from a Page#########
-## This function pulls form a specific date range, last 100 posts from a particular page
+## This function pulls last 100 posts from a particular page
 ## Then cleans out the  posts and writes a csv to your desketop
 
 
-pullPage <- function(x){
+pullPage <- function(page){
   load("fb_oauth")
   user <- Sys.info()["user"]
-  pageName = x
-  pageDirty <- getPage(page=pageName, token=fb_oauth, since="2014/12/01", until="2015/02/15", feed=FALSE)
+  pageName = page
+  pageDirty <- getPage(page=pageName, token=fb_oauth, feed=FALSE)
   pageClean = subset(pageDirty, pageDirty$link!="NA")
   write.csv(pageClean, file=paste('/Users/',user,'/Desktop/',pageName, '.csv', sep=""), row.names=F)
 }
@@ -45,10 +42,12 @@ pullPage <- function(x){
 ## returns the list to the console for verification
 
 ## Remember to import a dataframe with a list of page names
+##Create a DF of page names if need be
+pages <- data.frame(c("alaskaairlines", "alaskaairlines", "alaskaairlines", "alaskaairlines"))
 
-pullList <- function(x,month){
+pullList <- function(pageList,month){
   load("fb_oauth")
-  colnames(x)[1] <- 'page'
+  colnames(pageList)[1] <- 'page'
   user <- Sys.info()["user"]
   month <- as.numeric(month)
   
@@ -56,15 +55,15 @@ pullList <- function(x,month){
   col.type = c("character","character","character","character","character","character","character","character","character","character")
   col.names = c('from_id','from_name','message','created_time','type','link','id','likes_count','comments_count','shares_count')
   allPages <- read.csv(text="", colClasses=col.type, col.names=col.names)
-  #print(x)
+  #print(pageList)
   
-  i = unique(x)
+  i = unique(pageList)
   
   
   if (month<=12&&month>=10){
     month <- as.character(month)
     ###loop thru list and make csv for each along with aggregate list csv
-    for (i in x$page){
+    for (i in pageList$page){
       pageName <- as.character(i)
       pageDirty <- getPage(URLencode(pageName), token=fb_oauth, feed=FALSE)
       pageClean = subset(pageDirty, pageDirty$link!="NA")
@@ -95,7 +94,7 @@ pullList <- function(x,month){
   (month<=9&&month>=1){
     month <- as.character(month)
     ###loop thru list and make csv for each along with aggregate list csv
-    for (i in x$page){
+    for (i in pageList$page){
       pageName <- as.character(i)
       pageDirty <- getPage(URLencode(pageName), token=fb_oauth, feed=FALSE)
       pageClean = subset(pageDirty, pageDirty$link!="NA")
