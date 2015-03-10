@@ -19,7 +19,7 @@ authorizefb <- function(){
 
 #######Pull from a Page#########
 ## This function pulls last 100 posts from a particular page
-## Then cleans out the  posts and writes a csv to your desketop
+## Then cleans out the "NA"'s from the posts and writes a csv to your desketop
 
 
 pullPage <- function(page){
