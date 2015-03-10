@@ -43,7 +43,7 @@ pullPage <- function(page){
 
 ## Remember to import a dataframe with a list of page names
 ##Create a DF of page names if need be
-pages <- data.frame(c("alaskaairlines", "alaskaairlines", "alaskaairlines", "alaskaairlines"))
+##example: pages <- data.frame(c("Page 1", "Page 2", "Page 3", "Page 4"))
 
 pullList <- function(pageList,month){
   load("fb_oauth")
