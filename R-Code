@@ -11,7 +11,7 @@ authorizefb <- function(){
   library(dplyr)
   library(magrittr)
   
-  fb_oauth <- fbOAuth('130636077077630', '74ee0407448f6f79164510fcba6a212d', extended_permissions = TRUE)
+  fb_oauth <- fbOAuth('API Key', 'API Secret', extended_permissions = TRUE)
   save(fb_oauth, file="fb_oauth")
 }
 
