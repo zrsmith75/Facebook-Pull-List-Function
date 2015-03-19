@@ -20,9 +20,10 @@ authorizefb <- function(){
 #######Pull from a Page#########
 ## This function pulls last 100 posts from a particular page
 ## Then cleans out the NA's from the posts and writes a csv to your desketop
+## Variable has to be a string
 
 
-pullPage <- function(page){
+pullPage <- function("page"){
   load("fb_oauth")
   user <- Sys.info()["user"]
   pageName = page
@@ -41,6 +42,7 @@ pullPage <- function(page){
 ## Writes each page to its own csv to your desktop
 ## Writes a summary CSV for all pages called 'competitors' to your desktop
 ## returns the list to the console for verification
+## Variable is not a string, so no quotes needed
 
 ## Remember to import a dataframe with a list of page names
 ##Create a DF of page names if need be
