@@ -23,7 +23,7 @@ authorizefb <- function(){
 ## Variable has to be a string
 
 
-pullPage <- function("page"){
+pullPage <- function(page){
   load("fb_oauth")
   user <- Sys.info()["user"]
   pageName = page
